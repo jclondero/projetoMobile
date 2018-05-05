@@ -23,7 +23,8 @@
         <activity android:name=".EscolhaVolante" />
         <activity android:name=".EscolhaMeia" />
         <activity android:name=".EscolhaAtacante" />
-        <activity android:name=".FormacaoVisual"></activity>
+        <activity android:name=".FormacaoVisual" />
+        <activity android:name=".Formacao"></activity>
     </application>
 
 </manifest>

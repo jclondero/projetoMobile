@@ -1,9 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".EscolhaAtacante">
 
-</android.support.constraint.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_view_inserir_jogador">
+
+        <TextView
+            android:text="@string/tituloAtacante"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="@dimen/titulo_posicao"/>
+
+        <ImageView
+            android:layout_width="@dimen/imagem_posicao_largura"
+            android:layout_height="@dimen/imagem_posicao_altura"
+            android:layout_gravity="center"
+            android:src="@drawable/atacante"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/padding_view_inserir_jogador_dados">
+
+            <EditText
+                android:id="@+id/atacante1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/inputNomeJogador"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/padding_view_inserir_jogador_dados">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/textHabilidade"
+                    android:padding="@dimen/padding_view_inserir_jogador_habilidade"/>
+
+                <TextView
+                    android:id="@+id/habilidadeAtacanteUm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <SeekBar
+                android:id="@+id/controleHabilidadeAtacanteUmSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/padding_view_inserir_jogador">
+
+            <EditText
+                android:id="@+id/atacante2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/inputNomeJogador"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/padding_view_inserir_jogador_dados">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/textHabilidade"
+                    android:padding="@dimen/padding_view_inserir_jogador_habilidade"/>
+
+                <TextView
+                    android:id="@+id/habilidadeAtacanteDois"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <SeekBar
+                android:id="@+id/controleHabilidadeAtacanteDoisSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/escalarAtacante"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="fecharEscalacao"
+            android:text="@string/continuarEscalacao"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="voltarEscalacao"
+            android:text="@string/voltarEscalacao"/>
+
+    </LinearLayout>
+
+</ScrollView>

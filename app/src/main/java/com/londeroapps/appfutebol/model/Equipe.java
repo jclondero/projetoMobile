@@ -64,4 +64,10 @@ public class Equipe implements Serializable {
     public void setAtacante(Jogador atacante) {
         this.atacante = atacante;
     }
+
+    public String[] jogadores(){
+        String[] jogadores = new String[]{getGoleiro().getNome(),getLatDireito().getNome(),getLatEsquerdo().getNome(),
+        getVolante().getNome(),getMeia().getNome(),getAtacante().getNome()};
+        return jogadores;
+    }
 }
