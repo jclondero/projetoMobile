@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="logo_inicial_largura">120dp</dimen>
+    <dimen name="logo_inicial_altura">120dp</dimen>
+    <dimen name="margem_view_logo">50dp</dimen>
+    <dimen name="padding_view_inserir_jogador">10dp</dimen>
+    <dimen name="padding_view_inserir_jogador_dados">10dp</dimen>
+    <dimen name="padding_view_inserir_jogador_habilidade">2dp</dimen>
+    <dimen name="titulo_posicao">30sp</dimen>
+    <dimen name="imagem_posicao_largura">100dp</dimen>
+    <dimen name="imagem_posicao_altura">100dp</dimen>
+</resources>
