@@ -2,6 +2,7 @@ package com.londeroapps.appfutebol;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.GridView;
 
 import com.londeroapps.appfutebol.model.Equipe;
@@ -18,12 +19,18 @@ public class Formacao extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formacao);
 
-        Bundle extras = getIntent().getExtras();
-        equipe1 = (Equipe) extras.getSerializable("equipe1");
-        equipe2 = (Equipe) extras.getSerializable("equipe2");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Bundle extras = getIntent().getExtras();
+        // equipe1 = (Equipe) extras.getSerializable("equipe1");
+        // equipe2 = (Equipe) extras.getSerializable("equipe2");
         jogadores = new String[14];
 
-        //populaEquipe();
+        // Para teste
+        equipe1 = new Equipe();
+        equipe2 = new Equipe();
+        populaEquipe();
+
         converterObjetoJogadores();
 
         GridView gridView = (GridView) findViewById(R.id.gridFormacao);
@@ -47,7 +54,17 @@ public class Formacao extends AppCompatActivity {
         jogadores[13] = equipe2.getAtacante().getNome();
     }
 
-    /*
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public void populaEquipe(){
         Jogador jogador = new Jogador("Jean",80);
         equipe1.setGoleiro(jogador);
@@ -91,5 +108,4 @@ public class Formacao extends AppCompatActivity {
         jogador = new Jogador("Guilherme",80);
         equipe2.setAtacante(jogador);
     }
-    */
 }

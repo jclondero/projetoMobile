@@ -2,17 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="10dp">
+    android:orientation="vertical"
+    android:padding="@dimen/padding_view_jogador_adapter">
 
     <ImageView
         android:id="@+id/imgJogador"
-        android:layout_width="50dp"
-        android:layout_height="50dp" />
+        android:layout_width="@dimen/img_jogador_adapter_largura"
+        android:layout_height="@dimen/img_jogador_adapter_altura"
+        android:layout_gravity="center"/>
 
     <TextView
         android:id="@+id/txtJogador"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textColor="@color/padrao"
+        android:layout_gravity="center"/>
 
 </LinearLayout>

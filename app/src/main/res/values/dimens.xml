@@ -9,4 +9,9 @@
     <dimen name="titulo_posicao">30sp</dimen>
     <dimen name="imagem_posicao_largura">100dp</dimen>
     <dimen name="imagem_posicao_altura">100dp</dimen>
+    <dimen name="titulo_escalacao">30sp</dimen>
+    <dimen name="padding_view_formacao">10dp</dimen>
+    <dimen name="img_jogador_adapter_largura">50dp</dimen>
+    <dimen name="img_jogador_adapter_altura">50dp</dimen>
+    <dimen name="padding_view_jogador_adapter">10dp</dimen>
 </resources>
