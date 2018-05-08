@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/green"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -19,7 +20,7 @@
             android:layout_width = "@dimen/logo_inicial_largura"
             android:layout_height= "@dimen/logo_inicial_altura"
             android:layout_gravity="center"
-            app:srcCompat="@mipmap/ic_launcher_round"
+            app:srcCompat="@drawable/logo"
             />
 
     </LinearLayout>

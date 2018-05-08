@@ -21,15 +21,15 @@ public class Formacao extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Bundle extras = getIntent().getExtras();
-        // equipe1 = (Equipe) extras.getSerializable("equipe1");
-        // equipe2 = (Equipe) extras.getSerializable("equipe2");
+        Bundle extras = getIntent().getExtras();
+        equipe1 = (Equipe) extras.getSerializable("equipe1");
+        equipe2 = (Equipe) extras.getSerializable("equipe2");
         jogadores = new String[14];
 
         // Para teste
-        equipe1 = new Equipe();
-        equipe2 = new Equipe();
-        populaEquipe();
+        // equipe1 = new Equipe();
+        // equipe2 = new Equipe();
+        // populaEquipe();
 
         converterObjetoJogadores();
 
@@ -65,6 +65,7 @@ public class Formacao extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /*
     public void populaEquipe(){
         Jogador jogador = new Jogador("Jean",80);
         equipe1.setGoleiro(jogador);
@@ -108,4 +109,5 @@ public class Formacao extends AppCompatActivity {
         jogador = new Jogador("Guilherme",80);
         equipe2.setAtacante(jogador);
     }
+    */
 }
