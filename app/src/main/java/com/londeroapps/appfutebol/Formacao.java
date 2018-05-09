@@ -1,8 +1,10 @@
 package com.londeroapps.appfutebol;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.GridView;
 
 import com.londeroapps.appfutebol.model.Equipe;
@@ -110,4 +112,13 @@ public class Formacao extends AppCompatActivity {
         equipe2.setAtacante(jogador);
     }
     */
+
+    public void refazerEscalacao(View view){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    public void sairDoApp(View v){
+        finishAffinity();
+    }
 }

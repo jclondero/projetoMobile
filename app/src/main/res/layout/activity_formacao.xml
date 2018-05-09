@@ -5,25 +5,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/green"
     android:padding="@dimen/padding_view_formacao"
+    android:background="@drawable/green"
     tools:context=".Formacao">
 
-    <TextView
-        android:text="Escalação"
-        android:textColor="@color/padrao"
-        android:fontFamily="casual"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="@dimen/titulo_escalacao"/>
+        <TextView
+            android:text="Escalação"
+            android:textColor="@color/padrao"
+            android:fontFamily="casual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="@dimen/titulo_escalacao"/>
 
     <GridView
         android:id="@+id/gridFormacao"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:numColumns="2"
-        android:gravity="center">
-    </GridView>
+        android:layout_height="342dp"
+        android:gravity="center"
+        android:numColumns="2"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1">
+
+        <Button
+            android:onClick="refazerEscalacao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/refazer_escalacao"/>
+
+        <Button
+            android:onClick="sairDoApp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/fechar_app"/>
+
+    </LinearLayout>
 </LinearLayout>
