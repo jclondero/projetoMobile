@@ -31,8 +31,6 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".EscolhaAtacante"
             android:screenOrientation="portrait"/>
-        <activity android:name=".FormacaoVisual"
-            android:screenOrientation="portrait"/>
         <activity android:name=".Formacao"
             android:screenOrientation="portrait"/>
     </application>
