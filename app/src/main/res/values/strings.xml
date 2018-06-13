@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">AppFutebol</string>
     <string name="montar_times">Montar Times</string>
+    <string name="gerenciar_jogadores">Gerenciar Jogadores</string>
     <string name="fechar_app">Fechar App</string>
     <string name="tituloGoleiro">Goleiro</string>
     <string name="tituloLateralDireito">Lateral Direito</string>

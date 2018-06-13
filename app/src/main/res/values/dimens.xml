@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="logo_inicial_largura">300dp</dimen>
-    <dimen name="logo_inicial_altura">300dp</dimen>
+    <dimen name="logo_inicial_largura">250dp</dimen>
+    <dimen name="logo_inicial_altura">250dp</dimen>
     <dimen name="margem_view_logo">50dp</dimen>
     <dimen name="padding_view_inserir_jogador">10dp</dimen>
     <dimen name="padding_view_inserir_jogador_dados">10dp</dimen>

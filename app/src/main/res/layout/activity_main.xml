@@ -36,6 +36,12 @@
             android:text="@string/montar_times" />
 
         <Button
+            android:onClick="montarTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/gerenciar_jogadores" />
+
+        <Button
             android:onClick="sairDoApp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
