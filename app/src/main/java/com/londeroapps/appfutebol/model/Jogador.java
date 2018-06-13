@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 public class Jogador implements Serializable {
 
+    private int id;
     private String nome;
     private int habilidade;
 
