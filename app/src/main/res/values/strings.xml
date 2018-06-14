@@ -3,6 +3,7 @@
     <string name="montar_times">Montar Times</string>
     <string name="gerenciar_jogadores">Gerenciar Jogadores</string>
     <string name="fechar_app">Fechar App</string>
+    <string name="tituloJogadores">Jogadores</string>
     <string name="tituloGoleiro">Goleiro</string>
     <string name="tituloLateralDireito">Lateral Direito</string>
     <string name="tituloLateralEsquerdo">Lateral Esquerdo</string>
@@ -15,4 +16,5 @@
     <string name="continuarEscalacao">Continuar escalação</string>
     <string name="voltarEscalacao">Voltar escalação</string>
     <string name="refazer_escalacao">Refazer Escalação</string>
+    <string name="title_activity_main2">Main2Activity</string>
 </resources>

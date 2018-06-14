@@ -20,6 +20,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void gerenciarJogadores(View v){
+        Intent intent = new Intent(this, GerenciarJogadores.class);
+        startActivity(intent);
+    }
+
     public void sairDoApp(View v){
         finishAffinity();
     }

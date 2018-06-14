@@ -11,7 +11,8 @@ public class DbManager extends SQLiteOpenHelper {
     public static final String ID = "_id";
     public static final String NOME = "nome";
     public static final String HABILIDADE = "habilidade";
-    public static final int VERSAO = 1;
+    public static final String POSICAO = "posicao";
+    public static final int VERSAO = 2;
 
     public DbManager(Context context){
         super(context,NOME_BANCO,null,VERSAO);
@@ -21,7 +22,8 @@ public class DbManager extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String sql = "CREATE TABLE " + TABELA + " (" + ID
                 + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + NOME + " TEXT," + HABILIDADE + " INTEGER) ";
+                + NOME + " TEXT," + HABILIDADE + " INTEGER,"
+                + POSICAO + " TEXT) ";
         sqLiteDatabase.execSQL(sql);
     }
 

@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,22 +18,32 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".EscolhaLateralDireito"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".EscolhaGoleiro"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".EscolhaLateralEsquerdo"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".EscolhaZagueiro"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".EscolhaVolante"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".EscolhaMeia"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".EscolhaAtacante"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Formacao"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".EscolhaLateralDireito"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".EscolhaGoleiro"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".EscolhaLateralEsquerdo"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".EscolhaZagueiro"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".EscolhaVolante"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".EscolhaMeia"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".EscolhaAtacante"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Formacao"
+            android:screenOrientation="portrait" />
+        <activity android:name=".GerenciarJogadores" />
+        <activity android:name=".InserirJogador"></activity>
     </application>
 
 </manifest>
