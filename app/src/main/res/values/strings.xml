@@ -4,6 +4,7 @@
     <string name="gerenciar_jogadores">Gerenciar Jogadores</string>
     <string name="fechar_app">Fechar App</string>
     <string name="tituloJogadores">Jogadores</string>
+    <string name="tituloAtualizaJogador">Gerenciar Jogador</string>
     <string name="tituloGoleiro">Goleiro</string>
     <string name="tituloLateralDireito">Lateral Direito</string>
     <string name="tituloLateralEsquerdo">Lateral Esquerdo</string>
@@ -16,5 +17,8 @@
     <string name="continuarEscalacao">Continuar escalação</string>
     <string name="voltarEscalacao">Voltar escalação</string>
     <string name="refazer_escalacao">Refazer Escalação</string>
-    <string name="title_activity_main2">Main2Activity</string>
+    <string name="listagem_jogadores_nome">Nome</string>
+    <string name="listagem_jogadores_habilidade">Habilidade</string>
+    <string name="listagem_jogadores_posicao">Posição</string>
+    <string name="listagem_jogadores_id">ID</string>
 </resources>

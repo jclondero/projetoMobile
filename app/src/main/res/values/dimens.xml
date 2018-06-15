@@ -15,4 +15,6 @@
     <dimen name="img_jogador_adapter_altura">50dp</dimen>
     <dimen name="padding_view_jogador_adapter">10dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="listagem_jogadores_marginleft">5dp</dimen>
+    <dimen name="listagem_jogadores_margintop">10dp</dimen>
 </resources>

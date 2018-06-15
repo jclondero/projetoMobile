@@ -43,7 +43,8 @@
             android:name=".Formacao"
             android:screenOrientation="portrait" />
         <activity android:name=".GerenciarJogadores" />
-        <activity android:name=".InserirJogador"></activity>
+        <activity android:name=".InserirJogador" />
+        <activity android:name=".UpdateJogador"></activity>
     </application>
 
 </manifest>
