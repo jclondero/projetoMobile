@@ -59,8 +59,8 @@ public class DbController {
 
     public Cursor carregaJogadorByPosicao(String posicao){
         Cursor cursor;
-        String [] campos = {DbManager.NOME,DbManager.HABILIDADE,DbManager.POSICAO};
-        String where = DbManager.POSICAO + "=" + posicao;
+        String [] campos = {DbManager.ID,DbManager.NOME,DbManager.HABILIDADE,DbManager.POSICAO};
+        String where = DbManager.POSICAO + "='" + posicao+"'";
 
         db = banco.getReadableDatabase();
         cursor = db.query(DbManager.TABELA,campos,where,null,null,null,null,null);
