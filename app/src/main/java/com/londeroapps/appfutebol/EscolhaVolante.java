@@ -1,27 +1,37 @@
 package com.londeroapps.appfutebol;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.londeroapps.appfutebol.dao.DbController;
+import com.londeroapps.appfutebol.dao.DbManager;
 import com.londeroapps.appfutebol.model.Equipe;
 import com.londeroapps.appfutebol.model.Jogador;
 
+import java.util.ArrayList;
+
 public class EscolhaVolante extends AppCompatActivity {
 
-    private SeekBar habilidadeVolanteUm;
-    private SeekBar habilidadeVolanteDois;
-    private TextView textoHabilidadeVolanteUm;
-    private TextView textoHabilidadeVolanteDois;
-    private int auxHabilidadeVolanteUm = 0;
-    private int auxHabilidadeVolanteDois = 0;
-    private TextView textVolanteUm;
-    private TextView textVolanteDois;
+    private ListView lista;
+    private Cursor cursor;
+    private ArrayList<Jogador> listaJogadores = new ArrayList<Jogador>();
+    private Jogador jogador;
+    private String tmpNomeJogador;
+    private int tmpHabilidadeJogador;
+    private int[] tmp;
+    private int idVolante1 = -1;
+    private int idVolante2 = -1;
+    private Jogador volante1;
+    private Jogador volante2;
     private Equipe equipe1;
     private Equipe equipe2;
 
@@ -36,46 +46,64 @@ public class EscolhaVolante extends AppCompatActivity {
         equipe1 = (Equipe) extras.getSerializable("equipe1");
         equipe2 = (Equipe) extras.getSerializable("equipe2");
 
-        habilidadeVolanteUm = (SeekBar)findViewById(R.id.controleHabilidadeVolanteUmSeekBar);
-        textoHabilidadeVolanteUm = (TextView) findViewById(R.id.habilidadeVolanteUm);
-        atualizarHabilidadeVolanteUm(habilidadeVolanteUm.getProgress());
-        habilidadeVolanteUm.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        DbController dbController = new DbController(getBaseContext());
+        cursor = dbController.carregaJogadorByPosicao("Volante");
+        int temp = 0;
+
+        while(!cursor.isAfterLast()) {
+            tmpNomeJogador = cursor.getString(cursor.getColumnIndexOrThrow(DbManager.NOME));
+            tmpHabilidadeJogador = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow(DbManager.HABILIDADE)));
+            jogador = new Jogador(tmpNomeJogador,tmpHabilidadeJogador);
+            listaJogadores.add(jogador);
+            temp += 1;
+            cursor.moveToNext();
+        }
+
+        tmp = new int[temp];
+        for(int i = 0; i < temp; i++){
+            tmp[i] = 0;
+        }
+
+        lista = (ListView) findViewById(R.id.listView);
+        lista.setAdapter(new EscalacaoAdapter(this,listaJogadores));
+
+        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                atualizarHabilidadeVolanteUm(seekBar.getProgress());
-                auxHabilidadeVolanteUm = (int) seekBar.getProgress();
-            }
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String nomeTmp, habilidadeTmp;
+                cursor.moveToPosition(i);
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
+                if(tmp[i] != 1){
+                    if(idVolante1 != -1 && idVolante2 != -1){
+                        Toast.makeText(EscolhaVolante.this,"Você já selecionou dois volantes para a partida!",Toast.LENGTH_SHORT).show();
+                    } else {
+                        if(idVolante1 == -1){
+                            idVolante1 = i;
+                            String n1 = cursor.getString(cursor.getColumnIndexOrThrow(DbManager.NOME));
+                            int n2 = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow(DbManager.HABILIDADE)));
+                            volante1 = new Jogador(n1,n2);
+                        } else {
+                            idVolante2 = i;
+                            String n1 = cursor.getString(cursor.getColumnIndexOrThrow(DbManager.NOME));
+                            int n2 = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow(DbManager.HABILIDADE)));
+                            volante2 = new Jogador(n1,n2);
+                        }
+                        view.setBackgroundResource(R.drawable.bg_key);
+                        view.getBackground().setAlpha(200);
+                        tmp[i] = 1;
+                    }
+                } else {
+                    if(idVolante1 == i){
+                        idVolante1 = -1;
+                    } else {
+                        idVolante2 = -1;
+                    }
+                    view.getBackground().setAlpha(102);
+                    tmp[i] = 0;
+                }
             }
         });
 
-        habilidadeVolanteDois = (SeekBar)findViewById(R.id.controleHabilidadeVolanteDoisSeekBar);
-        textoHabilidadeVolanteDois = (TextView) findViewById(R.id.habilidadeVolanteDois);
-        atualizarHabilidadeVolanteDois(habilidadeVolanteDois.getProgress());
-        habilidadeVolanteDois.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                atualizarHabilidadeVolanteDois(seekBar.getProgress());
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
     }
 
     @Override
@@ -91,49 +119,27 @@ public class EscolhaVolante extends AppCompatActivity {
 
     public void escolherMeias (View v){
 
-        textVolanteUm = (TextView) findViewById(R.id.volante1);
-        textVolanteDois = (TextView) findViewById(R.id.volante2);
-
-        if(textVolanteUm.getText().toString().length() > 0 && textVolanteDois.getText().toString().length() > 0) {
-            if(auxHabilidadeVolanteUm > 0 && auxHabilidadeVolanteDois > 0) {
-
-                String nomeVolanteUm = textVolanteUm.getText().toString();
-                Jogador volanteUm = new Jogador(nomeVolanteUm, auxHabilidadeVolanteUm);
-
-                String nomeVolanteDois = textVolanteDois.getText().toString();
-                Jogador volanteDois = new Jogador(nomeVolanteDois, auxHabilidadeVolanteDois);
-
-                if (auxHabilidadeVolanteUm >= auxHabilidadeVolanteDois) {
-                    equipe1.setVolante(volanteUm);
-                    equipe2.setVolante(volanteDois);
-                } else {
-                    equipe1.setVolante(volanteDois);
-                    equipe2.setVolante(volanteUm);
-                }
-
-                Intent intent = new Intent(this, EscolhaMeia.class);
-                intent.putExtra("equipe1", equipe1);
-                intent.putExtra("equipe2", equipe2);
-                startActivity(intent);
+        if(idVolante1 != -1 && idVolante2 != -1){
+            if(volante1.getHabilidade() >= volante2.getHabilidade()){
+                equipe1.setVolante(volante1);
+                equipe2.setVolante(volante2);
             } else {
-                Toast.makeText(this,"Cada Jogador deve possuir pelo menos 1 ponto de habilidade!",Toast.LENGTH_LONG).show();
+                equipe2.setVolante(volante1);
+                equipe1.setVolante(volante2);
             }
+
+            Intent intent = new Intent(this, EscolhaMeia.class);
+            intent.putExtra("equipe1", equipe1);
+            intent.putExtra("equipe2", equipe2);
+            startActivity(intent);
         } else {
-            Toast.makeText(this,"É obrigatório o uso de nomes para cada Jogador!",Toast.LENGTH_LONG).show();
+            Toast.makeText(EscolhaVolante.this,"Escolha dois volantes para continuar com a escalação!",Toast.LENGTH_LONG).show();
         }
+
     }
 
     public void voltarEscalacao(View view) {
         super.onBackPressed();
     }
 
-    private void atualizarHabilidadeVolanteUm(int progressValue) {
-        textoHabilidadeVolanteUm.setText(progressValue + " pts");
-        auxHabilidadeVolanteUm = progressValue;
-    }
-
-    private void atualizarHabilidadeVolanteDois(int progressValue) {
-        textoHabilidadeVolanteDois.setText(progressValue + " pts");
-        auxHabilidadeVolanteDois = progressValue;
-    }
 }

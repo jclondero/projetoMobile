@@ -72,9 +72,6 @@ public class EscolhaGoleiro extends AppCompatActivity {
                 String nomeTmp, habilidadeTmp;
                 cursor.moveToPosition(i);
 
-                nomeTmp = cursor.getString(cursor.getColumnIndexOrThrow(DbManager.NOME));
-                habilidadeTmp = cursor.getString(cursor.getColumnIndexOrThrow(DbManager.HABILIDADE));
-
                 if(tmp[i] != 1){
                     if(idGoleiro1 != -1 && idGoleiro2 != -1){
                         Toast.makeText(EscolhaGoleiro.this,"Você já selecionou dois goleiros para a partida!",Toast.LENGTH_SHORT).show();

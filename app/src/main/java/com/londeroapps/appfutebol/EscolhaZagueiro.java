@@ -1,27 +1,37 @@
 package com.londeroapps.appfutebol;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.londeroapps.appfutebol.dao.DbController;
+import com.londeroapps.appfutebol.dao.DbManager;
 import com.londeroapps.appfutebol.model.Equipe;
 import com.londeroapps.appfutebol.model.Jogador;
 
+import java.util.ArrayList;
+
 public class EscolhaZagueiro extends AppCompatActivity {
 
-    private SeekBar habilidadeZagueiroUm;
-    private SeekBar habilidadeZagueiroDois;
-    private TextView textoHabilidadeZagueiroUm;
-    private TextView textoHabilidadeZagueiroDois;
-    private int auxHabilidadeZagueiroUm = 0;
-    private int auxHabilidadeZagueiroDois = 0;
-    private TextView textZagueiroUm;
-    private TextView textZagueiroDois;
+    private ListView lista;
+    private Cursor cursor;
+    private ArrayList<Jogador> listaJogadores = new ArrayList<Jogador>();
+    private Jogador jogador;
+    private String tmpNomeJogador;
+    private int tmpHabilidadeJogador;
+    private int[] tmp;
+    private int idZagueiro1 = -1;
+    private int idZagueiro2 = -1;
+    private Jogador zagueiro1;
+    private Jogador zagueiro2;
     private Equipe equipe1;
     private Equipe equipe2;
 
@@ -36,44 +46,61 @@ public class EscolhaZagueiro extends AppCompatActivity {
         equipe1 = (Equipe) extras.getSerializable("equipe1");
         equipe2 = (Equipe) extras.getSerializable("equipe2");
 
-        habilidadeZagueiroUm = (SeekBar)findViewById(R.id.controleHabilidadeZagueiroUmSeekBar);
-        textoHabilidadeZagueiroUm = (TextView) findViewById(R.id.habilidadeZagueiroUm);
-        atualizarHabilidadeZagueiroUm(habilidadeZagueiroUm.getProgress());
-        habilidadeZagueiroUm.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        DbController dbController = new DbController(getBaseContext());
+        cursor = dbController.carregaJogadorByPosicao("Zagueiro");
+        int temp = 0;
+
+        while(!cursor.isAfterLast()) {
+            tmpNomeJogador = cursor.getString(cursor.getColumnIndexOrThrow(DbManager.NOME));
+            tmpHabilidadeJogador = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow(DbManager.HABILIDADE)));
+            jogador = new Jogador(tmpNomeJogador,tmpHabilidadeJogador);
+            listaJogadores.add(jogador);
+            temp += 1;
+            cursor.moveToNext();
+        }
+
+        tmp = new int[temp];
+        for(int i = 0; i < temp; i++){
+            tmp[i] = 0;
+        }
+
+        lista = (ListView) findViewById(R.id.listView);
+        lista.setAdapter(new EscalacaoAdapter(this,listaJogadores));
+
+        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                atualizarHabilidadeZagueiroUm(seekBar.getProgress());
-                auxHabilidadeZagueiroUm = (int) seekBar.getProgress();
-            }
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String nomeTmp, habilidadeTmp;
+                cursor.moveToPosition(i);
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        habilidadeZagueiroDois = (SeekBar)findViewById(R.id.controleHabilidadeZagueiroDoisSeekBar);
-        textoHabilidadeZagueiroDois = (TextView) findViewById(R.id.habilidadeZagueiroDois);
-        atualizarHabilidadeZagueiroDois(habilidadeZagueiroDois.getProgress());
-        habilidadeZagueiroDois.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                atualizarHabilidadeZagueiroDois(seekBar.getProgress());
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
+                if(tmp[i] != 1){
+                    if(idZagueiro1 != -1 && idZagueiro2 != -1){
+                        Toast.makeText(EscolhaZagueiro.this,"Você já selecionou dois zagueiros para a partida!",Toast.LENGTH_SHORT).show();
+                    } else {
+                        if(idZagueiro1 == -1){
+                            idZagueiro1 = i;
+                            String n1 = cursor.getString(cursor.getColumnIndexOrThrow(DbManager.NOME));
+                            int n2 = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow(DbManager.HABILIDADE)));
+                            zagueiro1 = new Jogador(n1,n2);
+                        } else {
+                            idZagueiro2 = i;
+                            String n1 = cursor.getString(cursor.getColumnIndexOrThrow(DbManager.NOME));
+                            int n2 = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow(DbManager.HABILIDADE)));
+                            zagueiro2 = new Jogador(n1,n2);
+                        }
+                        view.setBackgroundResource(R.drawable.bg_key);
+                        view.getBackground().setAlpha(200);
+                        tmp[i] = 1;
+                    }
+                } else {
+                    if(idZagueiro1 == i){
+                        idZagueiro1 = -1;
+                    } else {
+                        idZagueiro2 = -1;
+                    }
+                    view.getBackground().setAlpha(102);
+                    tmp[i] = 0;
+                }
             }
         });
     }
@@ -91,35 +118,21 @@ public class EscolhaZagueiro extends AppCompatActivity {
 
     public void escolherVolantes (View v){
 
-        textZagueiroUm = (TextView) findViewById(R.id.zagueiro1);
-        textZagueiroDois = (TextView) findViewById(R.id.zagueiro2);
-
-        if(textZagueiroUm.getText().toString().length() > 0 && textZagueiroDois.getText().toString().length() > 0) {
-            if(auxHabilidadeZagueiroUm > 0 && auxHabilidadeZagueiroDois > 0) {
-
-                String nomeZagueiroUm = textZagueiroUm.getText().toString();
-                Jogador zagueiroUm = new Jogador(nomeZagueiroUm, auxHabilidadeZagueiroUm);
-
-                String nomeZagueiroDois = textZagueiroDois.getText().toString();
-                Jogador zagueiroDois = new Jogador(nomeZagueiroDois, auxHabilidadeZagueiroDois);
-
-                if (auxHabilidadeZagueiroUm < auxHabilidadeZagueiroDois) {
-                    equipe1.setZagueiro(zagueiroUm);
-                    equipe2.setZagueiro(zagueiroDois);
-                } else {
-                    equipe1.setZagueiro(zagueiroDois);
-                    equipe2.setZagueiro(zagueiroUm);
-                }
-
-                Intent intent = new Intent(this, EscolhaVolante.class);
-                intent.putExtra("equipe1", equipe1);
-                intent.putExtra("equipe2", equipe2);
-                startActivity(intent);
+        if(idZagueiro1 != -1 && idZagueiro2 != -1){
+            if(zagueiro1.getHabilidade() >= zagueiro2.getHabilidade()){
+                equipe1.setZagueiro(zagueiro1);
+                equipe2.setZagueiro(zagueiro2);
             } else {
-                Toast.makeText(this,"Cada Jogador deve possuir pelo menos 1 ponto de habilidade!",Toast.LENGTH_LONG).show();
+                equipe2.setZagueiro(zagueiro1);
+                equipe1.setZagueiro(zagueiro2);
             }
+
+            Intent intent = new Intent(this, EscolhaVolante.class);
+            intent.putExtra("equipe1", equipe1);
+            intent.putExtra("equipe2", equipe2);
+            startActivity(intent);
         } else {
-            Toast.makeText(this,"É obrigatório o uso de nomes para cada Jogador!",Toast.LENGTH_LONG).show();
+            Toast.makeText(EscolhaZagueiro.this,"Escolha dois zagueiros para continuar com a escalação!",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -127,14 +140,5 @@ public class EscolhaZagueiro extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    private void atualizarHabilidadeZagueiroUm(int progressValue) {
-        textoHabilidadeZagueiroUm.setText(progressValue + " pts");
-        auxHabilidadeZagueiroUm = progressValue;
-    }
-
-    private void atualizarHabilidadeZagueiroDois(int progressValue) {
-        textoHabilidadeZagueiroDois.setText(progressValue + " pts");
-        auxHabilidadeZagueiroDois = progressValue;
-    }
 
 }

@@ -1,27 +1,37 @@
 package com.londeroapps.appfutebol;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.londeroapps.appfutebol.dao.DbController;
+import com.londeroapps.appfutebol.dao.DbManager;
 import com.londeroapps.appfutebol.model.Equipe;
 import com.londeroapps.appfutebol.model.Jogador;
 
+import java.util.ArrayList;
+
 public class EscolhaLateralEsquerdo extends AppCompatActivity {
 
-    private SeekBar habilidadeLatEsquerdoUm;
-    private SeekBar habilidadeLatEsquerdoDois;
-    private TextView textoHabilidadeLatEsquerdoUm;
-    private TextView textoHabilidadeLatEsquerdoDois;
-    private int auxHabilidadeLatEsquerdoUm = 0;
-    private int auxHabilidadeLatEsquerdoDois = 0;
-    private TextView textLatEsquerdoUm;
-    private TextView textLatEsquerdoDois;
+    private ListView lista;
+    private Cursor cursor;
+    private ArrayList<Jogador> listaJogadores = new ArrayList<Jogador>();
+    private Jogador jogador;
+    private String tmpNomeJogador;
+    private int tmpHabilidadeJogador;
+    private int[] tmp;
+    private int idLateralEsquerdo1 = -1;
+    private int idLateralEsquerdo2 = -1;
+    private Jogador lateralEsquerdo1;
+    private Jogador lateralEsquerdo2;
     private Equipe equipe1;
     private Equipe equipe2;
 
@@ -36,44 +46,61 @@ public class EscolhaLateralEsquerdo extends AppCompatActivity {
         equipe1 = (Equipe) extras.getSerializable("equipe1");
         equipe2 = (Equipe) extras.getSerializable("equipe2");
 
-        habilidadeLatEsquerdoUm = (SeekBar)findViewById(R.id.controleHabilidadeLatEsquerdoUmSeekBar);
-        textoHabilidadeLatEsquerdoUm = (TextView) findViewById(R.id.habilidadeLatEsquerdoUm);
-        atualizarHabilidadeLatEsquerdoUm(habilidadeLatEsquerdoUm.getProgress());
-        habilidadeLatEsquerdoUm.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        DbController dbController = new DbController(getBaseContext());
+        cursor = dbController.carregaJogadorByPosicao("Lateral Esquerdo");
+        int temp = 0;
+
+        while(!cursor.isAfterLast()) {
+            tmpNomeJogador = cursor.getString(cursor.getColumnIndexOrThrow(DbManager.NOME));
+            tmpHabilidadeJogador = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow(DbManager.HABILIDADE)));
+            jogador = new Jogador(tmpNomeJogador,tmpHabilidadeJogador);
+            listaJogadores.add(jogador);
+            temp += 1;
+            cursor.moveToNext();
+        }
+
+        tmp = new int[temp];
+        for(int i = 0; i < temp; i++){
+            tmp[i] = 0;
+        }
+
+        lista = (ListView) findViewById(R.id.listView);
+        lista.setAdapter(new EscalacaoAdapter(this,listaJogadores));
+
+        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                atualizarHabilidadeLatEsquerdoUm(seekBar.getProgress());
-                auxHabilidadeLatEsquerdoUm = (int) seekBar.getProgress();
-            }
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String nomeTmp, habilidadeTmp;
+                cursor.moveToPosition(i);
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        habilidadeLatEsquerdoDois = (SeekBar)findViewById(R.id.controleHabilidadeLatEsquerdoDoisSeekBar);
-        textoHabilidadeLatEsquerdoDois = (TextView) findViewById(R.id.habilidadeLatEsquerdoDois);
-        atualizarHabilidadeLatEsquerdoDois(habilidadeLatEsquerdoDois.getProgress());
-        habilidadeLatEsquerdoDois.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                atualizarHabilidadeLatEsquerdoDois(seekBar.getProgress());
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
+                if(tmp[i] != 1){
+                    if(idLateralEsquerdo1 != -1 && idLateralEsquerdo2 != -1){
+                        Toast.makeText(EscolhaLateralEsquerdo.this,"Você já selecionou dois laterais esquerdos para a partida!",Toast.LENGTH_SHORT).show();
+                    } else {
+                        if(idLateralEsquerdo1 == -1){
+                            idLateralEsquerdo1 = i;
+                            String n1 = cursor.getString(cursor.getColumnIndexOrThrow(DbManager.NOME));
+                            int n2 = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow(DbManager.HABILIDADE)));
+                            lateralEsquerdo1 = new Jogador(n1,n2);
+                        } else {
+                            idLateralEsquerdo2 = i;
+                            String n1 = cursor.getString(cursor.getColumnIndexOrThrow(DbManager.NOME));
+                            int n2 = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow(DbManager.HABILIDADE)));
+                            lateralEsquerdo2 = new Jogador(n1,n2);
+                        }
+                        view.setBackgroundResource(R.drawable.bg_key);
+                        view.getBackground().setAlpha(200);
+                        tmp[i] = 1;
+                    }
+                } else {
+                    if(idLateralEsquerdo1 == i){
+                        idLateralEsquerdo1 = -1;
+                    } else {
+                        idLateralEsquerdo2 = -1;
+                    }
+                    view.getBackground().setAlpha(102);
+                    tmp[i] = 0;
+                }
             }
         });
     }
@@ -91,49 +118,25 @@ public class EscolhaLateralEsquerdo extends AppCompatActivity {
 
     public void escolherZagueiros (View v){
 
-        textLatEsquerdoUm = (TextView) findViewById(R.id.latesquerdo1);
-        textLatEsquerdoDois = (TextView) findViewById(R.id.latesquerdo2);
-
-        if(textLatEsquerdoUm.getText().toString().length() > 0 && textLatEsquerdoDois.getText().toString().length() > 0) {
-            if(auxHabilidadeLatEsquerdoUm > 0 && auxHabilidadeLatEsquerdoDois > 0) {
-
-                String nomeLatEsquerdoUm = textLatEsquerdoUm.getText().toString();
-                Jogador latEsquerdoUm = new Jogador(nomeLatEsquerdoUm, auxHabilidadeLatEsquerdoUm);
-
-                String nomeLatEsquerdoDois = textLatEsquerdoDois.getText().toString();
-                Jogador latEsquerdoDois = new Jogador(nomeLatEsquerdoDois, auxHabilidadeLatEsquerdoDois);
-
-                if (auxHabilidadeLatEsquerdoUm < auxHabilidadeLatEsquerdoDois) {
-                    equipe1.setLatEsquerdo(latEsquerdoUm);
-                    equipe2.setLatEsquerdo(latEsquerdoDois);
-                } else {
-                    equipe1.setLatEsquerdo(latEsquerdoDois);
-                    equipe2.setLatEsquerdo(latEsquerdoUm);
-                }
-
-                Intent intent = new Intent(this, EscolhaZagueiro.class);
-                intent.putExtra("equipe1", equipe1);
-                intent.putExtra("equipe2", equipe2);
-                startActivity(intent);
+        if(idLateralEsquerdo1 != -1 && idLateralEsquerdo2 != -1){
+            if(lateralEsquerdo1.getHabilidade() >= lateralEsquerdo2.getHabilidade()){
+                equipe1.setLatEsquerdo(lateralEsquerdo1);
+                equipe2.setLatEsquerdo(lateralEsquerdo2);
             } else {
-                Toast.makeText(this,"Cada Jogador deve possuir pelo menos 1 ponto de habilidade!",Toast.LENGTH_LONG).show();
+                equipe2.setLatEsquerdo(lateralEsquerdo1);
+                equipe1.setLatEsquerdo(lateralEsquerdo2);
             }
+
+            Intent intent = new Intent(this, EscolhaZagueiro.class);
+            intent.putExtra("equipe1", equipe1);
+            intent.putExtra("equipe2", equipe2);
+            startActivity(intent);
         } else {
-            Toast.makeText(this,"É obrigatório o uso de nomes para cada Jogador!",Toast.LENGTH_LONG).show();
+            Toast.makeText(EscolhaLateralEsquerdo.this,"Escolha dois laterais esquerdos para continuar com a escalação!",Toast.LENGTH_LONG).show();
         }
     }
 
     public void voltarEscalacao(View view) {
         super.onBackPressed();
-    }
-
-    private void atualizarHabilidadeLatEsquerdoUm(int progressValue) {
-        textoHabilidadeLatEsquerdoUm.setText(progressValue + " pts");
-        auxHabilidadeLatEsquerdoUm = progressValue;
-    }
-
-    private void atualizarHabilidadeLatEsquerdoDois(int progressValue) {
-        textoHabilidadeLatEsquerdoDois.setText(progressValue + " pts");
-        auxHabilidadeLatEsquerdoDois = progressValue;
     }
 }

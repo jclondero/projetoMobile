@@ -1,27 +1,37 @@
 package com.londeroapps.appfutebol;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.londeroapps.appfutebol.dao.DbController;
+import com.londeroapps.appfutebol.dao.DbManager;
 import com.londeroapps.appfutebol.model.Equipe;
 import com.londeroapps.appfutebol.model.Jogador;
 
+import java.util.ArrayList;
+
 public class EscolhaAtacante extends AppCompatActivity {
 
-    private SeekBar habilidadeAtacanteUm;
-    private SeekBar habilidadeAtacanteDois;
-    private TextView textoHabilidadeAtacanteUm;
-    private TextView textoHabilidadeAtacanteDois;
-    private int auxHabilidadeAtacanteUm = 0;
-    private int auxHabilidadeAtacanteDois = 0;
-    private TextView textAtacanteUm;
-    private TextView textAtacanteDois;
+    private ListView lista;
+    private Cursor cursor;
+    private ArrayList<Jogador> listaJogadores = new ArrayList<Jogador>();
+    private Jogador jogador;
+    private String tmpNomeJogador;
+    private int tmpHabilidadeJogador;
+    private int[] tmp;
+    private int idAtacante1 = -1;
+    private int idAtacante2 = -1;
+    private Jogador atacante1;
+    private Jogador atacante2;
     private Equipe equipe1;
     private Equipe equipe2;
 
@@ -36,44 +46,61 @@ public class EscolhaAtacante extends AppCompatActivity {
         equipe1 = (Equipe) extras.getSerializable("equipe1");
         equipe2 = (Equipe) extras.getSerializable("equipe2");
 
-        habilidadeAtacanteUm = (SeekBar)findViewById(R.id.controleHabilidadeAtacanteUmSeekBar);
-        textoHabilidadeAtacanteUm = (TextView) findViewById(R.id.habilidadeAtacanteUm);
-        atualizarHabilidadeAtacanteUm(habilidadeAtacanteUm.getProgress());
-        habilidadeAtacanteUm.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        DbController dbController = new DbController(getBaseContext());
+        cursor = dbController.carregaJogadorByPosicao("Atacante");
+        int temp = 0;
+
+        while(!cursor.isAfterLast()) {
+            tmpNomeJogador = cursor.getString(cursor.getColumnIndexOrThrow(DbManager.NOME));
+            tmpHabilidadeJogador = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow(DbManager.HABILIDADE)));
+            jogador = new Jogador(tmpNomeJogador,tmpHabilidadeJogador);
+            listaJogadores.add(jogador);
+            temp += 1;
+            cursor.moveToNext();
+        }
+
+        tmp = new int[temp];
+        for(int i = 0; i < temp; i++){
+            tmp[i] = 0;
+        }
+
+        lista = (ListView) findViewById(R.id.listView);
+        lista.setAdapter(new EscalacaoAdapter(this,listaJogadores));
+
+        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                atualizarHabilidadeAtacanteUm(seekBar.getProgress());
-                auxHabilidadeAtacanteUm = (int) seekBar.getProgress();
-            }
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String nomeTmp, habilidadeTmp;
+                cursor.moveToPosition(i);
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        habilidadeAtacanteDois = (SeekBar)findViewById(R.id.controleHabilidadeAtacanteDoisSeekBar);
-        textoHabilidadeAtacanteDois = (TextView) findViewById(R.id.habilidadeAtacanteDois);
-        atualizarHabilidadeAtacanteDois(habilidadeAtacanteDois.getProgress());
-        habilidadeAtacanteDois.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                atualizarHabilidadeAtacanteDois(seekBar.getProgress());
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
+                if(tmp[i] != 1){
+                    if(idAtacante1 != -1 && idAtacante2 != -1){
+                        Toast.makeText(EscolhaAtacante.this,"Você já selecionou dois atacantes para a partida!",Toast.LENGTH_SHORT).show();
+                    } else {
+                        if(idAtacante1 == -1){
+                            idAtacante1 = i;
+                            String n1 = cursor.getString(cursor.getColumnIndexOrThrow(DbManager.NOME));
+                            int n2 = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow(DbManager.HABILIDADE)));
+                            atacante1 = new Jogador(n1,n2);
+                        } else {
+                            idAtacante2 = i;
+                            String n1 = cursor.getString(cursor.getColumnIndexOrThrow(DbManager.NOME));
+                            int n2 = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow(DbManager.HABILIDADE)));
+                            atacante2 = new Jogador(n1,n2);
+                        }
+                        view.setBackgroundResource(R.drawable.bg_key);
+                        view.getBackground().setAlpha(200);
+                        tmp[i] = 1;
+                    }
+                } else {
+                    if(idAtacante1 == i){
+                        idAtacante1 = -1;
+                    } else {
+                        idAtacante2 = -1;
+                    }
+                    view.getBackground().setAlpha(102);
+                    tmp[i] = 0;
+                }
             }
         });
     }
@@ -91,35 +118,21 @@ public class EscolhaAtacante extends AppCompatActivity {
 
     public void fecharEscalacao (View v){
 
-        textAtacanteUm = (TextView) findViewById(R.id.atacante1);
-        textAtacanteDois = (TextView) findViewById(R.id.atacante2);
-
-        if(textAtacanteUm.getText().toString().length() > 0 && textAtacanteDois.getText().toString().length() > 0) {
-            if(auxHabilidadeAtacanteUm > 0 && auxHabilidadeAtacanteDois > 0) {
-
-                String nomeAtacanteUm = textAtacanteUm.getText().toString();
-                Jogador atacanteUm = new Jogador(nomeAtacanteUm, auxHabilidadeAtacanteUm);
-
-                String nomeAtacanteDois = textAtacanteDois.getText().toString();
-                Jogador atacanteDois = new Jogador(nomeAtacanteDois, auxHabilidadeAtacanteDois);
-
-                if (auxHabilidadeAtacanteUm < auxHabilidadeAtacanteDois) {
-                    equipe1.setAtacante(atacanteUm);
-                    equipe2.setAtacante(atacanteDois);
-                } else {
-                    equipe1.setAtacante(atacanteDois);
-                    equipe2.setAtacante(atacanteUm);
-                }
-
-                Intent intent = new Intent(this, Formacao.class);
-                intent.putExtra("equipe1", equipe1);
-                intent.putExtra("equipe2", equipe2);
-                startActivity(intent);
+        if(idAtacante1 != -1 && idAtacante2 != -1){
+            if(atacante1.getHabilidade() >= atacante2.getHabilidade()){
+                equipe1.setAtacante(atacante1);
+                equipe2.setAtacante(atacante2);
             } else {
-                Toast.makeText(this,"Cada Jogador deve possuir pelo menos 1 ponto de habilidade!",Toast.LENGTH_LONG).show();
+                equipe2.setAtacante(atacante1);
+                equipe1.setAtacante(atacante2);
             }
+
+            Intent intent = new Intent(this, Formacao.class);
+            intent.putExtra("equipe1", equipe1);
+            intent.putExtra("equipe2", equipe2);
+            startActivity(intent);
         } else {
-            Toast.makeText(this,"É obrigatório o uso de nomes para cada Jogador!",Toast.LENGTH_LONG).show();
+            Toast.makeText(EscolhaAtacante.this,"Escolha dois atacantes para continuar com a escalação!",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -127,13 +140,4 @@ public class EscolhaAtacante extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    private void atualizarHabilidadeAtacanteUm(int progressValue) {
-        textoHabilidadeAtacanteUm.setText(progressValue + " pts");
-        auxHabilidadeAtacanteUm = progressValue;
-    }
-
-    private void atualizarHabilidadeAtacanteDois(int progressValue) {
-        textoHabilidadeAtacanteDois.setText(progressValue + " pts");
-        auxHabilidadeAtacanteDois = progressValue;
-    }
 }

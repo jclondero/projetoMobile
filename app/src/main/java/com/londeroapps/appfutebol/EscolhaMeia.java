@@ -1,27 +1,37 @@
 package com.londeroapps.appfutebol;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.londeroapps.appfutebol.dao.DbController;
+import com.londeroapps.appfutebol.dao.DbManager;
 import com.londeroapps.appfutebol.model.Equipe;
 import com.londeroapps.appfutebol.model.Jogador;
 
+import java.util.ArrayList;
+
 public class EscolhaMeia extends AppCompatActivity {
 
-    private SeekBar habilidadeMeiaUm;
-    private SeekBar habilidadeMeiaDois;
-    private TextView textoHabilidadeMeiaUm;
-    private TextView textoHabilidadeMeiaDois;
-    private int auxHabilidadeMeiaUm = 0;
-    private int auxHabilidadeMeiaDois = 0;
-    private TextView textMeiaUm;
-    private TextView textMeiaDois;
+    private ListView lista;
+    private Cursor cursor;
+    private ArrayList<Jogador> listaJogadores = new ArrayList<Jogador>();
+    private Jogador jogador;
+    private String tmpNomeJogador;
+    private int tmpHabilidadeJogador;
+    private int[] tmp;
+    private int idMeia1 = -1;
+    private int idMeia2 = -1;
+    private Jogador meia1;
+    private Jogador meia2;
     private Equipe equipe1;
     private Equipe equipe2;
 
@@ -36,44 +46,61 @@ public class EscolhaMeia extends AppCompatActivity {
         equipe1 = (Equipe) extras.getSerializable("equipe1");
         equipe2 = (Equipe) extras.getSerializable("equipe2");
 
-        habilidadeMeiaUm = (SeekBar)findViewById(R.id.controleHabilidadeMeiaUmSeekBar);
-        textoHabilidadeMeiaUm = (TextView) findViewById(R.id.habilidadeMeiaUm);
-        atualizarHabilidadeMeiaUm(habilidadeMeiaUm.getProgress());
-        habilidadeMeiaUm.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        DbController dbController = new DbController(getBaseContext());
+        cursor = dbController.carregaJogadorByPosicao("Meia");
+        int temp = 0;
+
+        while(!cursor.isAfterLast()) {
+            tmpNomeJogador = cursor.getString(cursor.getColumnIndexOrThrow(DbManager.NOME));
+            tmpHabilidadeJogador = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow(DbManager.HABILIDADE)));
+            jogador = new Jogador(tmpNomeJogador,tmpHabilidadeJogador);
+            listaJogadores.add(jogador);
+            temp += 1;
+            cursor.moveToNext();
+        }
+
+        tmp = new int[temp];
+        for(int i = 0; i < temp; i++){
+            tmp[i] = 0;
+        }
+
+        lista = (ListView) findViewById(R.id.listView);
+        lista.setAdapter(new EscalacaoAdapter(this,listaJogadores));
+
+        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                atualizarHabilidadeMeiaUm(seekBar.getProgress());
-                auxHabilidadeMeiaUm = (int) seekBar.getProgress();
-            }
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String nomeTmp, habilidadeTmp;
+                cursor.moveToPosition(i);
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        habilidadeMeiaDois = (SeekBar)findViewById(R.id.controleHabilidadeMeiaDoisSeekBar);
-        textoHabilidadeMeiaDois = (TextView) findViewById(R.id.habilidadeMeiaDois);
-        atualizarHabilidadeMeiaDois(habilidadeMeiaDois.getProgress());
-        habilidadeMeiaDois.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                atualizarHabilidadeMeiaDois(seekBar.getProgress());
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
+                if(tmp[i] != 1){
+                    if(idMeia1 != -1 && idMeia2 != -1){
+                        Toast.makeText(EscolhaMeia.this,"Você já selecionou dois meias para a partida!",Toast.LENGTH_SHORT).show();
+                    } else {
+                        if(idMeia1 == -1){
+                            idMeia1 = i;
+                            String n1 = cursor.getString(cursor.getColumnIndexOrThrow(DbManager.NOME));
+                            int n2 = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow(DbManager.HABILIDADE)));
+                            meia1 = new Jogador(n1,n2);
+                        } else {
+                            idMeia2 = i;
+                            String n1 = cursor.getString(cursor.getColumnIndexOrThrow(DbManager.NOME));
+                            int n2 = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow(DbManager.HABILIDADE)));
+                            meia2 = new Jogador(n1,n2);
+                        }
+                        view.setBackgroundResource(R.drawable.bg_key);
+                        view.getBackground().setAlpha(200);
+                        tmp[i] = 1;
+                    }
+                } else {
+                    if(idMeia1 == i){
+                        idMeia1 = -1;
+                    } else {
+                        idMeia2 = -1;
+                    }
+                    view.getBackground().setAlpha(102);
+                    tmp[i] = 0;
+                }
             }
         });
     }
@@ -91,35 +118,21 @@ public class EscolhaMeia extends AppCompatActivity {
 
     public void escolherAtacantes (View v){
 
-        textMeiaUm = (TextView) findViewById(R.id.meia1);
-        textMeiaDois = (TextView) findViewById(R.id.meia2);
-
-        if(textMeiaUm.getText().toString().length() > 0 && textMeiaDois.getText().toString().length() > 0) {
-            if(auxHabilidadeMeiaUm > 0 && auxHabilidadeMeiaDois > 0) {
-
-                String nomeMeiaUm = textMeiaUm.getText().toString();
-                Jogador meiaUm = new Jogador(nomeMeiaUm, auxHabilidadeMeiaUm);
-
-                String nomeMeiaDois = textMeiaDois.getText().toString();
-                Jogador meiaDois = new Jogador(nomeMeiaDois, auxHabilidadeMeiaDois);
-
-                if (auxHabilidadeMeiaUm >= auxHabilidadeMeiaDois) {
-                    equipe1.setMeia(meiaUm);
-                    equipe2.setMeia(meiaDois);
-                } else {
-                    equipe1.setMeia(meiaDois);
-                    equipe2.setMeia(meiaUm);
-                }
-
-                Intent intent = new Intent(this, EscolhaAtacante.class);
-                intent.putExtra("equipe1", equipe1);
-                intent.putExtra("equipe2", equipe2);
-                startActivity(intent);
+        if(idMeia1 != -1 && idMeia2 != -1){
+            if(meia1.getHabilidade() >= meia2.getHabilidade()){
+                equipe1.setMeia(meia1);
+                equipe2.setMeia(meia2);
             } else {
-                Toast.makeText(this,"Cada Jogador deve possuir pelo menos 1 ponto de habilidade!",Toast.LENGTH_LONG).show();
+                equipe2.setMeia(meia1);
+                equipe1.setMeia(meia2);
             }
+
+            Intent intent = new Intent(this, EscolhaAtacante.class);
+            intent.putExtra("equipe1", equipe1);
+            intent.putExtra("equipe2", equipe2);
+            startActivity(intent);
         } else {
-            Toast.makeText(this,"É obrigatório o uso de nomes para cada Jogador!",Toast.LENGTH_LONG).show();
+            Toast.makeText(EscolhaMeia.this,"Escolha dois meias para continuar com a escalação!",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -127,13 +140,4 @@ public class EscolhaMeia extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    private void atualizarHabilidadeMeiaUm(int progressValue) {
-        textoHabilidadeMeiaUm.setText(progressValue + " pts");
-        auxHabilidadeMeiaUm = progressValue;
-    }
-
-    private void atualizarHabilidadeMeiaDois(int progressValue) {
-        textoHabilidadeMeiaDois.setText(progressValue + " pts");
-        auxHabilidadeMeiaDois = progressValue;
-    }
 }
