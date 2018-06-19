@@ -98,7 +98,7 @@ public class EscolhaLateralDireito extends AppCompatActivity {
                     } else {
                         idLateralDireito2 = -1;
                     }
-                    view.getBackground().setAlpha(102);
+                    view.getBackground().setAlpha(0);
                     tmp[i] = 0;
                 }
             }
